@@ -64,8 +64,10 @@ class AuthProvider with ChangeNotifier {
 
   Future<bool> initializeUserModel() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String _userId = preferences.getString('id')!;
-    _userModel = await UserServices().getUserById(_userId);
+    String? _userId = preferences.getString('id');
+    if (_userId != null) {
+      _userModel = await UserServices().getUserById(_userId);
+    }
     notifyListeners();
     if (_userModel == null) {
       return false;
