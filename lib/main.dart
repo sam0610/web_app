@@ -18,9 +18,7 @@ void main() async {
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Chat room',
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
+          theme: themeData(),
           home: const AppScreensController())));
 }
 
