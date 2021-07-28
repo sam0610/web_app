@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:googleapis_auth/googleapis_auth.dart' as gapis;
+import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 
 // ignore: constant_identifier_names
 enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
@@ -18,7 +20,6 @@ class AuthProvider with ChangeNotifier {
   final UserServices _userServices = UserServices();
 
   UserModel? _userModel;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 //  getter
   UserModel? get userModel => _userModel;
@@ -34,9 +35,18 @@ class AuthProvider with ChangeNotifier {
     });
   }
 
+  Future<gapis.AuthClient?> getClient() async {
+    try {
+      var httpClient = (await googleSignIn.authenticatedClient())!;
+      return httpClient;
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<Map<String, dynamic>> sigInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
           await googleUser!.authentication;
 
@@ -46,19 +56,22 @@ class AuthProvider with ChangeNotifier {
         _user = userCredential.user;
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("id", _user!.uid);
-        if (!await _userServices.doesUserExist(_user!.uid)) {
-          _userServices.createUser(
-              id: _user!.uid,
-              name: _user!.displayName ?? "",
-              photo: _user!.photoURL ?? "");
-          await initializeUserModel();
-        } else {
-          await initializeUserModel();
-        }
+        await createIfNull(_user!);
+        await initializeUserModel();
       });
       return {'success': true, 'message': 'success'};
     } catch (e) {
       return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  createIfNull(_user) async {
+    if (!await _userServices.doesUserExist(_user!.uid)) {
+      _userServices.createUser(
+          id: _user!.uid,
+          name: _user!.displayName ?? "",
+          photo: _user!.photoURL ?? "",
+          email: _user!.email ?? "");
     }
   }
 

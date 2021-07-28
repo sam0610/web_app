@@ -4,23 +4,36 @@ import 'package:web_app/models/user.dart';
 
 class UserServices {
   String collection = "users";
+  String divCollection = "divData";
 
   void createUser({
     required String id,
     required String name,
     required String photo,
+    required String email,
   }) {
     firebaseFirestore.collection(collection).doc(id).set({
       "name": name,
       "id": id,
       "photo": photo,
+      "email": email,
+      "div": "NKIV"
     });
   }
 
-  Future<UserModel> getUserById(String id) => userCollectionReference
-      .doc(id)
-      .get()
-      .then((value) => value.data() as UserModel);
+  Future<UserModel> getUserById(String id) =>
+      userCollectionReference.doc(id).get().then((value) {
+        var user = value.data() as UserModel;
+        return firebaseFirestore
+            .collection(divCollection)
+            .doc(user.div)
+            .get()
+            .then((value) {
+          var div = DivData.fromJson(value.data()!);
+          user.divData = div;
+          return user;
+        });
+      });
 
   Future<bool> doesUserExist(String id) async => firebaseFirestore
       .collection(collection)

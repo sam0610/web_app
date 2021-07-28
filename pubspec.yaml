@@ -39,6 +39,8 @@ dependencies:
   provider: ^5.0.0
   cloud_firestore: ^2.4.0
   shared_preferences: ^2.0.6
+  googleapis: ^4.0.0
+  extension_google_sign_in_as_googleapis_auth: ^2.0.2
 
 dev_dependencies:
   flutter_test:
