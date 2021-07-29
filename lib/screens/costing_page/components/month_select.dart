@@ -21,10 +21,6 @@ class _MonthSelectionState extends State<MonthSelection> {
         child: StreamBuilder(
             stream: costingProvider.getMonth(),
             builder: (ctx, snapshot) {
-              if (!snapshot.hasData) {
-                return Container();
-              }
-              Set<String> list = snapshot.data as Set<String>;
               return SizedBox(
                 width: 200,
                 child: PopupMenuButton<String>(
@@ -36,10 +32,20 @@ class _MonthSelectionState extends State<MonthSelection> {
                         decoration:
                             const InputDecoration(border: OutlineInputBorder()),
                         child: Text(selected)),
-                    itemBuilder: (context) => list
-                        .map((e) =>
-                            PopupMenuItem<String>(child: Text(e), value: e))
-                        .toList()),
+                    initialValue: 'Loading',
+                    itemBuilder: (context) {
+                      if (snapshot.hasData) {
+                        Set<String> list = snapshot.data as Set<String>;
+                        return list
+                            .map((e) =>
+                                PopupMenuItem<String>(child: Text(e), value: e))
+                            .toList();
+                      }
+                      return const [
+                        PopupMenuItem<String>(
+                            child: Text('loading..'), value: 'null')
+                      ];
+                    }),
               );
             }));
   }
