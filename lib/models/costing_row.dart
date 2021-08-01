@@ -42,19 +42,25 @@ class CostingRow {
   final double rental;
   final double waterElectric;
   final double rM;
+
+  final double calcInsurance;
   final double otherInsurance;
   final double laborInsurance;
+
   final double thirdpartyInsurance;
-  final double prdoubleingAndStationery;
-  final double postage;
   final double phone;
   final double entertainment;
+  final double computerRm;
+
+  final double calcMISC;
   final double trafficFees;
   final double photocopyingFees;
-  final double computerRm;
   final double licenseFees;
   final double miscellaneous;
   final double mobilePhone;
+  final double printingAndStationery;
+  final double postage;
+
   final double training;
   final double leasedline;
   final double transportationFees;
@@ -66,16 +72,22 @@ class CostingRow {
   final double margin;
   final double cardepreciation;
   final double machinedepreciation;
+
   final double material;
   final double salary;
   final double casualCost;
+
+  final double calcMPF;
   final double orso;
   final double orsoReward;
   final double mpf;
   final double mpfReward;
+
+  final double calcAdminCost;
   final double officeDirectCost;
   final double adminCost;
   final double tax;
+
   final double totalCost;
   final double profit;
 
@@ -126,7 +138,7 @@ class CostingRow {
       this.otherInsurance,
       this.laborInsurance,
       this.thirdpartyInsurance,
-      this.prdoubleingAndStationery,
+      this.printingAndStationery,
       this.postage,
       this.phone,
       this.entertainment,
@@ -158,7 +170,17 @@ class CostingRow {
       this.adminCost,
       this.tax,
       this.totalCost,
-      this.profit);
+      this.profit)
+      : calcMPF = orso + orsoReward + mpf + mpfReward,
+        calcAdminCost = officeDirectCost + adminCost + tax,
+        calcInsurance = otherInsurance + laborInsurance,
+        calcMISC = trafficFees +
+            photocopyingFees +
+            licenseFees +
+            miscellaneous +
+            mobilePhone +
+            printingAndStationery +
+            postage;
 
   CostingRow.fromArray(List d)
       : this(
@@ -242,4 +264,90 @@ class CostingRow {
           double.parse(d[77] ?? "0.0").roundToDouble(),
           double.parse(d[78] ?? "0.0").roundToDouble(),
         );
+
+  Map<String, dynamic> toJson() => {
+        'month': month,
+        'customer': customer,
+        'hyManager': hyManager,
+        'nxManager': nxManager,
+        'nxSupervisor': nxSupervisor,
+        'bldgCode': bldgCode,
+        'bldgName': bldgName,
+        'headcount': headcount,
+        'bldgIncome': bldgIncome,
+        'pestcontrol': pestcontrol,
+        'indoorIncome': indoorIncome,
+        'bldgNonContractIncome': bldgNonContractIncome,
+        'indoorNonContractIncome': indoorNonContractIncome,
+        'packageCleaningIncome': packageCleaningIncome,
+        'debrisDisposalIncome': debrisDisposalIncome,
+        'carpetCleaningIncome': carpetCleaningIncome,
+        'casualIncome': casualIncome,
+        'liftpitIncome': liftpitIncome,
+        'wasteDisposalIncome': wasteDisposalIncome,
+        'externalWallIncome': externalWallIncome,
+        'carCleaningIncome': carCleaningIncome,
+        'materialSalesIncome': materialSalesIncome,
+        'totalIncome': totalIncome,
+        'bldgCost': bldgCost,
+        'indoorCost': indoorCost,
+        'bldgNonContractCost': bldgNonContractCost,
+        'indoorNonContractCost': indoorNonContractCost,
+        'packageCleaningCost': packageCleaningCost,
+        'debrisDisposalCost': debrisDisposalCost,
+        'carpetCleaningCost': carpetCleaningCost,
+        'liftpitCost': liftpitCost,
+        'wasteDisposalCost': wasteDisposalCost,
+        'externalwallCost': externalwallCost,
+        'carCleaningCost': carCleaningCost,
+        'materialsalesCost': materialsalesCost,
+        'meal': meal,
+        'staffBenefit': staffBenefit,
+        'medical': medical,
+        'uniform': uniform,
+        'employmentAd': employmentAd,
+        'rental': rental,
+        'waterElectric': waterElectric,
+        'rM': rM,
+        'otherInsurance': otherInsurance,
+        'laborInsurance': laborInsurance,
+        'thirdpartyInsurance': thirdpartyInsurance,
+        'printingAndStationery': printingAndStationery,
+        'postage': postage,
+        'phone': phone,
+        'entertainment': entertainment,
+        'trafficFees': trafficFees,
+        'photocopyingFees': photocopyingFees,
+        'computerRm': computerRm,
+        'licenseFees': licenseFees,
+        'miscellaneous': miscellaneous,
+        'mobilePhone': mobilePhone,
+        'training': training,
+        'leasedline': leasedline,
+        'transportationFees': transportationFees,
+        'carfuel': carfuel,
+        'carRm': carRm,
+        'carParking': carParking,
+        'carInsurance': carInsurance,
+        'carmisc': carmisc,
+        'margin': margin,
+        'cardepreciation': cardepreciation,
+        'machinedepreciation': machinedepreciation,
+        'material': material,
+        'salary': salary,
+        'casualCost': casualCost,
+        'orso': orso,
+        'orsoReward': orsoReward,
+        'mpf': mpf,
+        'mpfReward': mpfReward,
+        'officeDirectCost': officeDirectCost,
+        'adminCost': adminCost,
+        'tax': tax,
+        'totalCost': totalCost,
+        'profit': profit,
+        'calcAdminCost': calcAdminCost,
+        'calcMPF': calcMPF,
+        'calcInsurance': calcInsurance,
+        'calcMISC': calcMISC,
+      };
 }

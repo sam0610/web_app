@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:web_app/helper/constants.dart';
 import 'package:web_app/providers/costing_provider.dart';
 
 class MonthSelection extends StatefulWidget {
@@ -11,42 +10,55 @@ class MonthSelection extends StatefulWidget {
 }
 
 class _MonthSelectionState extends State<MonthSelection> {
-  String selected = "";
+  List<String> selected = [];
+  final TextEditingController _cont = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     var costingProvider = Provider.of<CostingProvider>(context);
-    return Container(
-        padding: const EdgeInsets.all(defaultPadding),
+    return SizedBox(
+        width: 200,
         child: StreamBuilder(
-            stream: costingProvider.getMonth(),
+            stream: costingProvider.getMonth,
             builder: (ctx, snapshot) {
-              return SizedBox(
-                width: 200,
-                child: PopupMenuButton<String>(
-                    onSelected: (d) => setState(() {
-                          selected = d;
-                          print(d);
-                        }),
-                    child: InputDecorator(
-                        decoration:
-                            const InputDecoration(border: OutlineInputBorder()),
-                        child: Text(selected)),
-                    initialValue: 'Loading',
-                    itemBuilder: (context) {
-                      if (snapshot.hasData) {
-                        Set<String> list = snapshot.data as Set<String>;
-                        return list
-                            .map((e) =>
-                                PopupMenuItem<String>(child: Text(e), value: e))
-                            .toList();
-                      }
-                      return const [
-                        PopupMenuItem<String>(
-                            child: Text('loading..'), value: 'null')
-                      ];
-                    }),
-              );
+              return PopupMenuButton<String>(
+                  padding: const EdgeInsets.all(0),
+                  initialValue: 'Loading',
+                  child: TextField(
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.view_day),
+                        hintText: '月份'),
+                    enabled: false,
+                    controller: _cont,
+                  ),
+                  onSelected: (d) => setState(() {
+                        selected.contains(d)
+                            ? selected.remove(d)
+                            : selected.add(d);
+                        costingProvider.setMonth(selected);
+                        _cont.text = 'Selected ${selected.length}';
+                      }),
+                  itemBuilder: (context) {
+                    if (snapshot.hasData) {
+                      Set<String> list = snapshot.data as Set<String>;
+                      return list
+                          .map((e) => CheckedPopupMenuItem<String>(
+                                child: SizedBox(
+                                    width: 100,
+                                    child: Text(e,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.clip)),
+                                value: e,
+                                checked: selected.contains(e),
+                              ))
+                          .toList();
+                    }
+                    return const [
+                      PopupMenuItem<String>(
+                          child: Text('loading..'), value: 'null')
+                    ];
+                  });
             }));
   }
 }

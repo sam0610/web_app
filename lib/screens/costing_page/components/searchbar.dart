@@ -17,15 +17,15 @@ class _SearchFieldState extends State<SearchField> {
   Widget build(BuildContext context) {
     var costingProvider = Provider.of<CostingProvider>(context);
     return Container(
-      width: 500,
+      width: 400,
       padding: const EdgeInsets.all(defaultPadding),
-      child: TextFormField(
+      child: TextField(
           decoration: const InputDecoration(
               border: OutlineInputBorder(),
               suffixIcon: Icon(Icons.search),
               hintText: '輸入搜尋字'),
           controller: _cont,
-          onFieldSubmitted: (t) => costingProvider.filter(t)),
+          onSubmitted: (t) => costingProvider.filter(t)),
     );
   }
 }
