@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web_app/screens/agingPage/aging_page.dart';
 import 'package:web_app/screens/costing_page/costing_page.dart';
 import 'package:web_app/widgets/home_drawer.dart';
 
@@ -10,7 +11,7 @@ class Home extends StatelessWidget {
     return Scaffold(
         body: Row(children: const [
 //      Flexible(flex: 1, child: HomeDrawer()),
-      Expanded(flex: 5, child: CostingPage()),
+      Expanded(flex: 5, child: AgingPage()),
     ]));
   }
 }

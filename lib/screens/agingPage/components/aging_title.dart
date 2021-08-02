@@ -1,10 +1,8 @@
-import 'dart:js';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_app/helper/constants.dart';
-import 'package:web_app/providers/costing_provider.dart';
-import 'package:web_app/screens/costing_page/components/month_select.dart';
+import 'package:web_app/providers/aging_provider.dart';
+import 'package:web_app/screens/agingPage/components/bldg_select.dart';
 import 'package:web_app/screens/costing_page/components/searchbar.dart';
 
 class TitleWidget extends StatelessWidget {
@@ -12,7 +10,7 @@ class TitleWidget extends StatelessWidget {
   final String title;
   @override
   Widget build(BuildContext context) {
-    CostingProvider costingProvider = Provider.of<CostingProvider>(context);
+    AgingProvider agingProvider = Provider.of<AgingProvider>(context);
     return Container(
       padding: const EdgeInsets.all(defaultPadding),
       child: Row(
@@ -22,10 +20,8 @@ class TitleWidget extends StatelessWidget {
           Text(title, style: Theme.of(context).textTheme.headline6),
           const Spacer(),
           Expanded(
-              child: SearchField(
-            callback: (txt) => costingProvider.filter(txt),
-          )),
-          const MonthSelection(),
+              child: SearchField(callback: (txt) => agingProvider.filter(txt))),
+          const BldgSelection(),
         ],
       ),
     );

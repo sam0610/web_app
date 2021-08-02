@@ -11,8 +11,8 @@ class CostingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var authProvider = Provider.of<AuthProvider>(context);
-    var db = authProvider.userModel!.divData.db;
     var client = authProvider.getClient();
+    var db = authProvider.userModel!.divData.db;
     return Provider<CostingProvider>(
         create: (_) => CostingProvider(db),
         dispose: (_, __) => CostingProvider(db).dispose(),

@@ -23,9 +23,15 @@ const scopes = [
 
 const double defaultPadding = 10.0;
 
+const primaryColor = Colors.blue;
+const secondaryColor = Colors.lightBlueAccent;
+const bgColor = Colors.blueGrey;
+
 ThemeData themeData() => ThemeData(
-    primaryColor: Colors.blue,
+    primaryColor: primaryColor,
+    scaffoldBackgroundColor: bgColor,
     primarySwatch: Colors.purple,
+    canvasColor: secondaryColor,
     backgroundColor: Colors.blue.shade100,
     textTheme: GoogleFonts.robotoTextTheme());
 
@@ -668,4 +674,16 @@ const incomeFields = [
     'type': double,
     'visible': true,
   }
+];
+
+const agingColors = [
+  Colors.blue,
+  Colors.yellow,
+  Colors.orange,
+  Colors.red,
+  Colors.green,
+  Colors.purple,
+  Colors.pink,
+  Colors.teal,
+  Colors.indigo,
 ];

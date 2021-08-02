@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:web_app/helper/constants.dart';
-import 'package:web_app/providers/costing_provider.dart';
 
 class SearchField extends StatefulWidget {
-  const SearchField({Key? key}) : super(key: key);
+  const SearchField({required this.callback, Key? key}) : super(key: key);
+  final Function(String) callback;
 
   @override
   _SearchFieldState createState() => _SearchFieldState();
@@ -15,7 +14,6 @@ class _SearchFieldState extends State<SearchField> {
 
   @override
   Widget build(BuildContext context) {
-    var costingProvider = Provider.of<CostingProvider>(context);
     return Container(
       width: 400,
       padding: const EdgeInsets.all(defaultPadding),
@@ -25,7 +23,7 @@ class _SearchFieldState extends State<SearchField> {
               suffixIcon: Icon(Icons.search),
               hintText: '輸入搜尋字'),
           controller: _cont,
-          onSubmitted: (t) => costingProvider.filter(t)),
+          onSubmitted: (t) => widget.callback(t)),
     );
   }
 }
