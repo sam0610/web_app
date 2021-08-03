@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'package:web_app/helper/constants.dart';
 import 'package:web_app/models/aging_row.dart';
+import 'package:web_app/models/user.dart';
+import 'package:web_app/services/bldg.dart';
 import 'package:web_app/services/sheet.dart';
 import "package:googleapis_auth/auth_browser.dart";
 
 class AgingProvider {
-  AgingProvider(this._sheetID);
+  AgingProvider(this.divData) : _sheetID = divData.db;
+  final DivData divData;
   final String _sheetID;
   List<AgingRow>? _db;
   List<AgingRow>? _filteredDB;
@@ -54,12 +57,13 @@ class AgingProvider {
       List<AgingRow> tmp2 = [];
       for (var m in _selBldg) {
         var tmp = _filteredDB!
-            .where((element) => element.rename.contains(m))
+            .where((element) => element.bldgCode.contains(m))
             .toList();
         tmp2.addAll(tmp);
       }
       _filteredDB = tmp2;
     }
+
     _agingStream.sink.add(_filteredDB);
     //notifyListeners();
   }
@@ -91,6 +95,11 @@ class AgingProvider {
     if (data != null) {
       List<AgingRow> r = SheetsServices()
           .sheetToTable<AgingRow>(data, (l) => AgingRow.fromArray(l));
+      BldgServices bldgServices = BldgServices(divData.ref);
+
+      for (var a in r) {
+        a.bldgName = bldgServices.getBldg(a.bldgCode).bldgName;
+      }
       return r;
     } else {
       return null;
