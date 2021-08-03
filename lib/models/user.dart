@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
   final String id;
   final String name;
@@ -36,6 +38,7 @@ class UserModel {
 
 class DivData {
   String db;
+  late DocumentReference ref;
 
   DivData({required this.db});
 

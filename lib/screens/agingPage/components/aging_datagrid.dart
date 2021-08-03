@@ -65,6 +65,14 @@ class _AgingDataGridState extends State<AgingDataGrid> {
     return Consumer<List<AgingRow>?>(builder: (ctx, data, _) {
       if (data == null) return const Loader();
 
+      List<PlutoRow> _tmp = rows(data);
+
+      if (_gridStateManager != null) {
+        var oldRows = _gridStateManager!.rows;
+        _gridStateManager!.removeRows(oldRows);
+        _gridStateManager!.appendRows(_tmp);
+      }
+
       sortByDate() {
         data.sort((a, b) => a.date!.compareTo(b.date!));
       }
@@ -123,7 +131,7 @@ class _AgingDataGridState extends State<AgingDataGrid> {
               _gridStateManager = event.stateManager;
             },
             columns: columns(),
-            rows: rows(data),
+            rows: _tmp,
             onChanged: (PlutoGridOnChangedEvent e) {
               if (e.column!.title.toString() == "remark") {
                 var remark = e.row!.cells['remark']!.value;

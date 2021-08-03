@@ -16,10 +16,10 @@ class _AgingPageState extends State<AgingPage> {
   @override
   Widget build(BuildContext context) {
     var authProvider = Provider.of<AuthProvider>(context);
-    var db = authProvider.userModel!.divData.db;
+    var div = authProvider.userModel!.divData;
     return Provider<AgingProvider>(
-        create: (_) => AgingProvider(db),
-        dispose: (_, __) => AgingProvider(db).dispose(),
+        create: (_) => AgingProvider(div),
+        dispose: (_, __) => AgingProvider(div).dispose(),
         builder: (context, _) {
           return SafeArea(
               child: Column(children: const [

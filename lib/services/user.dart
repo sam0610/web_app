@@ -30,6 +30,7 @@ class UserServices {
             .get()
             .then((value) {
           var div = DivData.fromJson(value.data()!);
+          div.ref = value.reference;
           user.divData = div;
           return user;
         });
