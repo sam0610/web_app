@@ -3,6 +3,8 @@ import 'package:web_app/helper/constants.dart';
 import 'package:web_app/models/aging_row.dart';
 import 'package:web_app/models/user.dart';
 import 'package:web_app/services/bldg.dart';
+import 'package:web_app/services/customer.dart';
+import 'package:web_app/services/remark.dart';
 import 'package:web_app/services/sheet.dart';
 import "package:googleapis_auth/auth_browser.dart";
 
@@ -13,7 +15,7 @@ class AgingProvider {
   List<AgingRow>? _db;
   List<AgingRow>? _filteredDB;
   final _bldgStream = StreamController<Set<String>>();
-  final _agingStream = StreamController<List<AgingRow>?>();
+  final _agingStream = StreamController<List<AgingRow>?>.broadcast();
 
   Stream<Set<String>> get getBldg => _bldgStream.stream;
   Stream<List<AgingRow>?> get getAging => _agingStream.stream;
@@ -80,6 +82,7 @@ class AgingProvider {
         _client = await flow.clientViaUserConsent();
         // Authenticated and auto refreshing client is available in [client].
         _db = await proceed(_client);
+        loadData();
         _client.close();
         flow.close();
       }
@@ -89,17 +92,30 @@ class AgingProvider {
     }
   }
 
+  Future<void> loadData() async {
+    if (_db == null) return;
+    BldgServices bldgServices = BldgServices(divData.ref);
+    RemarkServices remarkServices = RemarkServices(divData.ref);
+    CustomersServices customersServices = CustomersServices(divData.ref);
+    for (var a in _db!) {
+      a.bldgName = bldgServices.getBldg(a.bldgCode).bldgName;
+      a.remark = remarkServices.getRmk(a.invNumber);
+      a.rename =
+          customersServices.getCustomer(a.customerName, a.chineseName).rename;
+    }
+  }
+
+  reload() async {
+    await loadData();
+    _filter();
+  }
+
   Future<List<AgingRow>?> proceed(_client) async {
     var data =
         await SheetsServices().loadSheets(_client, _sheetID, 'AGING!A2:N');
     if (data != null) {
       List<AgingRow> r = SheetsServices()
           .sheetToTable<AgingRow>(data, (l) => AgingRow.fromArray(l));
-      BldgServices bldgServices = BldgServices(divData.ref);
-
-      for (var a in r) {
-        a.bldgName = bldgServices.getBldg(a.bldgCode).bldgName;
-      }
       return r;
     } else {
       return null;

@@ -9,7 +9,7 @@ class ClientAgingSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScrollController _scrollController = new ScrollController();
+    ScrollController _scrollController = ScrollController();
     var bData = groupBy(data, (AgingRow obj) => obj.bldgCode);
     List<Map<String, dynamic>> list = [];
 

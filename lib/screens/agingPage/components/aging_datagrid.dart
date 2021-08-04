@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:googleapis/admin/directory_v1.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
 import 'package:web_app/helper/loader.dart';
 import 'package:web_app/models/aging_row.dart';
+import 'package:web_app/models/bldg_data.dart';
+import 'package:web_app/providers/aging_provider.dart';
+import 'package:web_app/providers/auth.dart';
+import 'package:web_app/services/bldg.dart';
+import 'package:web_app/services/customer.dart';
+import 'package:web_app/services/remark.dart';
 
 class AgingDataGrid extends StatefulWidget {
   const AgingDataGrid({Key? key}) : super(key: key);
@@ -62,6 +69,13 @@ class _AgingDataGridState extends State<AgingDataGrid> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider auth = Provider.of<AuthProvider>(context);
+    AgingProvider aging = Provider.of<AgingProvider>(context);
+    RemarkServices remarkServices = RemarkServices(auth.userModel!.divData.ref);
+    BldgServices bldgServices = BldgServices(auth.userModel!.divData.ref);
+    CustomersServices customersServices =
+        CustomersServices(auth.userModel!.divData.ref);
+
     return Consumer<List<AgingRow>?>(builder: (ctx, data, _) {
       if (data == null) return const Loader();
 
@@ -136,13 +150,19 @@ class _AgingDataGridState extends State<AgingDataGrid> {
               if (e.column!.title.toString() == "remark") {
                 var remark = e.row!.cells['remark']!.value;
                 var invNumber = e.row!.cells['invNumber']!.value;
-                //apiServices.setRmk(invNumber, remark);
+                remarkServices.createRmk(Remarks(invNumber, remark));
               }
               if (e.column!.title.toString() == "rename") {
                 var customerName = e.row!.cells['customerName']!.value;
                 var rename = e.row!.cells['rename']!.value;
-                //apiServices.setCustomer(customerName, rename);
-                //apiServices.save(null);
+                customersServices.setCustomer(customerName, rename);
+                customersServices.save();
+              }
+              if (e.column!.title.toString() == "bldgName") {
+                var bldgName = e.row!.cells['bldgName']!.value;
+                var bldgCode = e.row!.cells['bldgCode']!.value;
+
+                bldgServices.createBldg(BldgData(bldgCode, bldgName));
               }
             },
           ),
@@ -162,23 +182,30 @@ List<Map<String, dynamic>> fields = [
     'frozen': PlutoColumnFrozen.left
   },
   {
+    'field': 'bldgCode',
+    'name': 'bldgCode',
+    'type': PlutoColumnType.text(readOnly: true),
+    'hide': true,
+    'width': 170
+  },
+  {
     'field': 'bldgName',
     'name': 'bldgName',
-    'type': PlutoColumnType.text(readOnly: true),
+    'type': PlutoColumnType.text(readOnly: false),
     'hide': false,
     'width': 170
   },
   {
     'field': 'date',
     'name': 'date',
-    'type': PlutoColumnType.date(),
+    'type': PlutoColumnType.date(readOnly: true),
     'hide': false,
     'width': 170
   },
   {
     'field': 'customerName',
     'name': 'customerName',
-    'type': PlutoColumnType.text(),
+    'type': PlutoColumnType.text(readOnly: true),
     'hide': true,
     'width': 170
   },
@@ -192,70 +219,70 @@ List<Map<String, dynamic>> fields = [
   {
     'field': '0-30',
     'name': 'd0_30',
-    'type': PlutoColumnType.number(),
+    'type': PlutoColumnType.number(readOnly: true),
     'hide': true,
     'width': 90
   },
   {
     'field': '31-60',
     'name': 'd31_60',
-    'type': PlutoColumnType.number(),
+    'type': PlutoColumnType.number(readOnly: true),
     'hide': true,
     'width': 90
   },
   {
     'field': '61-90',
     'name': 'd61_90',
-    'type': PlutoColumnType.number(),
+    'type': PlutoColumnType.number(readOnly: true),
     'hide': true,
     'width': 90
   },
   {
     'field': '91-180',
     'name': 'd91_180',
-    'type': PlutoColumnType.number(),
+    'type': PlutoColumnType.number(readOnly: true),
     'hide': true,
     'width': 90
   },
   {
     'field': '181-365',
     'name': 'd181_365',
-    'type': PlutoColumnType.number(),
+    'type': PlutoColumnType.number(readOnly: true),
     'hide': true,
     'width': 90
   },
   {
     'field': '1-2y',
     'name': 'y1_2',
-    'type': PlutoColumnType.number(),
+    'type': PlutoColumnType.number(readOnly: true),
     'hide': true,
     'width': 90
   },
   {
     'field': '2-3y',
     'name': 'y2_3',
-    'type': PlutoColumnType.number(),
+    'type': PlutoColumnType.number(readOnly: true),
     'hide': true,
     'width': 90
   },
   {
     'field': 'over3y',
     'name': 'over3',
-    'type': PlutoColumnType.number(),
+    'type': PlutoColumnType.number(readOnly: true),
     'hide': true,
     'width': 90
   },
   {
     'field': 'amount',
     'name': 'amount',
-    'type': PlutoColumnType.number(),
+    'type': PlutoColumnType.number(readOnly: true),
     'hide': false,
     'width': 90
   },
   {
     'field': 'remark',
     'name': 'remark',
-    'type': PlutoColumnType.text(),
+    'type': PlutoColumnType.text(readOnly: true),
     'hide': false,
     'width': 180
   },
